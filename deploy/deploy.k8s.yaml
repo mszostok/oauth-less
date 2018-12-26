@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oauth-less-proxy
+  labels:
+    app: oauth-less-proxy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oauth-less-proxy
+  template:
+    metadata:
+      labels:
+        app: oauth-less-proxy
+    spec:
+      containers:
+      - name: proxy
+        image: mszostok/oauth-less:0.1.0
+        env:
+          - name: APP_PORT
+            value: 8080
+          # those envs need to be provided
+          - name: APP_CLIENT_ID
+            value: ""
+          - name: APP_CLIENT_SECRET
+            value: ""
+          - name: APP_TOKEN_URL
+            value: ""
+          - name: APP_REDIRECT_BASE_URL
+            value: ""
+        ports:
+        - containerPort: 8080
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: oauth-less-proxy
+spec:
+  selector:
+    app: oauth-less-proxy
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 8080

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"net/http/httputil"
@@ -20,6 +21,7 @@ type Config struct {
 	ClientSecret string
 	TokenURL     string
 
+	Port            int `envconfig:"default=8080"`
 	RedirectBaseURL string
 }
 
@@ -45,7 +47,7 @@ func main() {
 		Transport: client.Transport,
 	}
 
-	err = http.ListenAndServe("localhost:9090", proxy)
+	err = http.ListenAndServe(fmt.Sprintf("localhost:%d", cfg.Port), proxy)
 	fatalOnErr(err, "while executing ListenAndServe")
 }
 
